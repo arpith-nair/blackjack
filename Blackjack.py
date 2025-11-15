@@ -6,9 +6,10 @@ while True:
     if input() == "+":
         break
     print("Press - to start.")
-print("Start Balance of 500")
+print("Start Balance: 500")
 Balance=500
-print("Try Reach 50,000")
+print("Goal:")
+print("Reach 50,000")
 def game(): 
     global win,Bet
     while True:
@@ -16,7 +17,8 @@ def game():
             Bet=int(input("Bet Value?"))
             break
         except ValueError:
-            print("Please enter a valid integer.")
+            print("Please enter a")
+            print("Valid Integer.")
     win=-1
     suits = ('Hearts','Diamonds','Spades','Clubs')
     cards = ('Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King')
@@ -134,6 +136,7 @@ def fullcheck():
 def balancecheck():
     if Balance>=50000:
         print("Goal Reached")
+        print("Well Played")
     elif Balance<=0:
         print("Bankrupt")
         print("GAME OVER")
@@ -148,6 +151,7 @@ while more=='+':
     fullcheck()
     balancecheck()
     more=input("Play Again?(+/-)")
-print("Thank You for Playing!")
+print("Thank You")
+print("For playing!")
 #By Arpith Nair
 #15/11/2025
