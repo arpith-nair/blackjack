@@ -3,156 +3,201 @@ print("Welcome to Blackjack!")
 print("Start?")
 print("Press + to start.")
 while True:
-    if input() == "+":
+    if input()=="+":
         break
     print("Press + to start.")
+while True:
+    try:
+        PNum=int(input("Num Players?(1-8):"))
+        if 1<=PNum<=8:
+            break
+        else:
+            print("Num Players?(1-8):")
+    except ValueError:
+        print("Num Players?(1-8):")
+balances=[]
+for i in range(PNum):
+    balances.append(500)
 print("Start Balance: 500")
-Balance=500
 print("Goal:")
 print("Reach 50,000")
-def game(): 
-    global win,Bet
-    while True:
-        try:
-            Bet=int(input("Bet Value?"))
-            break
-        except ValueError:
-            print("Please enter a")
-            print("Valid Integer.")
-    win=-1
-    suits = ('Hearts','Diamonds','Spades','Clubs')
-    cards = ('Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King')
-    values = {
-    "Ace": 11,
-    "Two": 2,
-    "Three": 3,
-    "Four": 4,
-    "Five": 5,
-    "Six": 6,
-    "Seven": 7,
-    "Eight": 8,
-    "Nine": 9,
-    "Ten": 10,
-    "Jack": 10,
-    "Queen": 10,
-    "King": 10
+def game():
+    bets=[]
+    results=[]
+    for i in range(PNum):
+        results.append(-1)
+    bets = []
+    for i in range(PNum):
+        while True:
+            try:
+                print("Enter bet for Player",i+1)
+                bet=int(input())
+                bets.append(bet)
+                break         
+            except ValueError:
+                print("Please enter a"\
+                      "Valid integer.")
+    suits=('Hearts','Diamonds','Spades','Clubs')
+    cards=('Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King')
+    values={
+        "Ace": 11,
+        "Two": 2,
+        "Three": 3,
+        "Four": 4,
+        "Five": 5,
+        "Six": 6,
+        "Seven": 7,
+        "Eight": 8,
+        "Nine": 9,
+        "Ten": 10,
+        "Jack": 10,
+        "Queen": 10,
+        "King": 10
     }
-    deck = []
-    p_hand=[]
+    deck=[]
     d_hand=[]
-    for i in suits:
-        for j in cards:
-            card=(j + " of " + i)
-            deck.append(card)
+    hands=[]
+    for i in range(PNum):
+        hands.append([])
+    single_deck=[c+" of "+s for s in suits for c in cards]
+    deck=single_deck*8
     random.shuffle(deck)
-    def tot(k):
-        tot=0
+    def tot(hand):
+        t=0
         aces=0
-        totl=len(k)
-        for v in range(totl):
-            c_v=k[v].split(" ")[0]
-            tot+=values[c_v]
-            if c_v=="Ace":
+        for card in hand:
+            name=card.split(" ")[0]
+            t+=values[name]
+            if name=="Ace":
                 aces+=1
-        while tot>21 and aces>0:
-            tot-=10
-            aces-=1        
-        return tot
-    def show(k):
-        print("\n")
-        if k is d_hand:
-            print("Dealer\'s Hand:")
-            for m in k:
-                print(m)
+        while t>21 and aces>0:
+            t-=10
+            aces-=1
+        return t
+    def show(hand,n):
+        print("")
+        if hand is d_hand:
+            print("Dealer's Hand:")
         else:
-            print("Your Hand:")
-            for m in k:
-                print(m)        
+            print("Player", n+1, "Hand:")
+        for c in hand:
+            print(c)
     def dealer():
         while tot(d_hand)<17:
             print("Dealer hits.")
             d_hand.append(deck.pop())
-            show(d_hand)
-            print("Total:",tot(d_hand))
-            print("\n")
-    def checkwinner():
-        global win
-        show(d_hand)
-        print("Total value:",tot(d_hand))
-        if tot(d_hand)>21:
-            print("Dealer Bust!")
-            dval=0
+            show(d_hand,-1)
+            print("Total:", tot(d_hand))
+            print("")
+    def checkwinner(n):
+        dealer_total=tot(d_hand)
+        player_total=tot(hands[n])
+
+        if dealer_total>21:
+            dealer_total=0
+
+        if player_total>dealer_total:
+            print("Player",n+1,"wins!")
+            return 1
+        elif player_total<dealer_total:
+            print("Dealer wins against Player",n+1)
+            return 0
         else:
-            dval=tot(d_hand)    
-        if tot(p_hand)>dval:
-            print("You Win!")
-            win=1
-        elif tot(p_hand)<dval:
-            print("Dealer Won")
-            win=0
-        else:
-            print("Tie!")
-            win=2
-        return
-    def check_end():
-        total = tot(p_hand)
-        if total == 21:
+            print("Player",n+1,"ties!")
+            return 2
+    def check_end(n):
+        total=tot(hands[n])
+        if total==21:
             print("Blackjack!")
             dealer()
-            checkwinner()
-            return True
-        elif total > 21:
+            return checkwinner(n)
+        elif total>21:
             print("Bust!")
-            global win
-            win=0
-            return True
-        return False
-    p_hand.append(deck.pop())
+            return 0
+        return -1
+    for i in range(PNum):
+        hands[i].append(deck.pop())
     d_hand.append(deck.pop())
-    p_hand.append(deck.pop())
+    for i in range(PNum):
+        hands[i].append(deck.pop())
     d_hand.append(deck.pop())
-    show(p_hand)
-    print("Total value:",tot(p_hand))
-    if check_end():
-        return
-    hs=input("Hit or Stand?(+/-):")
-    while hs not in ("+","-"):
+    for i in range(PNum):
+        print("Player",i+1)
+        print("Press + to See Hand")
+        while True:
+            if input()=="+":
+                break
+        show(hands[i], i)
+        print("Total value:",tot(hands[i]))
+        r=check_end(i)
+        if r!=-1:
+            results[i]=r
+        print("Press + When Done")
+        while True:
+            if input()=="+":
+                break
+            print("Press + When Done")
+        print("\n"*20)
+    for i in range(PNum):
+        if results[i]!=-1:
+            continue
+        print("Player", i+1)
         hs=input("Hit or Stand?(+/-):")
-    while hs=="+":
-        p_hand.append(deck.pop())
-        show(p_hand)
-        print("Total value:",tot(p_hand))
-        if check_end():
-            return
-        hs=input("Hit or Stand?(+/-):")
-    checkwinner()
-def fullcheck():
-    global Balance
-    if win==0:
-        Balance-=Bet
-    elif win==1:
-        Balance+=Bet
-    print("Balance:",Balance)
+        while hs not in ("+","-"):
+            hs=input("Hit or Stand?(+/-):")
+        while hs=="+":
+            hands[i].append(deck.pop())
+            show(hands[i], i)
+            print("Total value:",tot(hands[i]))
+            r=check_end(i)
+            if r!=-1:
+                results[i]=r
+                break
+            hs=input("Hit or Stand?(+/-):")
+    active=False
+    for r in results:
+        if r==-1:
+            active=True
+    if active:
+        dealer()
+    for i in range(PNum):
+        if results[i]==-1:
+            results[i]=checkwinner(i)
+    return results,bets
+def update_balances(results,bets):
+    for i in range(PNum):
+        if results[i]==1:
+            balances[i]+=bets[i]
+        elif results[i]==0:
+            balances[i]-=bets[i]
+    for i in range(PNum):
+        print("Player",i+1,"Balance:",balances[i])
 def balancecheck():
-    if Balance>=50000:
-        print("Goal Reached")
-        print("Well Played")
-    elif Balance<=0:
-        print("Bankrupt")
-        print("GAME OVER")
-game()
-fullcheck()
-balancecheck()
-more=input("Play Again?(+/-)")
-while more not in ("+","-"):
+    for bal in balances:
+        if bal>=50000:
+            print("Goal Reached")
+            print("Well Played")
+            return True
+        if bal<=0:
+            print("Bankrupt")
+            print("GAME OVER")
+            return True
+    return False
+results,bets=game()
+update_balances(results,bets)
+if balancecheck():
+    pass
+else:
     more=input("Play Again?(+/-)")
-while more=='+':
-    game()
-    fullcheck()
-    balancecheck()
-    more=input("Play Again?(+/-)")
+    while more not in ("+","-"):
+        more=input("Play Again?(+/-)")
+    while more=="+":
+        results,bets=game()
+        update_balances(results,bets)
+        if balancecheck():
+            break
+        more=input("Play Again?(+/-)")
 print("Thank You")
 print("For playing!")
 #By Arpith Nair
-
-#15/11/2025
+#16/11/25
