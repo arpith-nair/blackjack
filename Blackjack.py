@@ -5,7 +5,7 @@ print("Press + to start.")
 while True:
     if input() == "+":
         break
-    print("Press - to start.")
+    print("Press + to start.")
 print("Start Balance: 500")
 Balance=500
 print("Goal:")
@@ -154,4 +154,5 @@ while more=='+':
 print("Thank You")
 print("For playing!")
 #By Arpith Nair
+
 #15/11/2025
