@@ -173,15 +173,28 @@ def update_balances(results,bets):
     for i in range(PNum):
         print("Player",i+1,"Balance:",balances[i])
 def balancecheck():
-    for bal in balances:
+    winners = []
+    bankrupts = []
+    for i,bal in enumerate(balances):
         if bal>=50000:
-            print("Goal Reached")
-            print("Well Played")
-            return True
-        if bal<=0:
-            print("Bankrupt")
-            print("GAME OVER")
-            return True
+            winners.append(i+1)
+        elif bal<=0:
+            bankrupts.append(i+1)
+    if winners:
+        if len(winners)==1:
+            print("Player",winners[0],"has reached 50,000!")
+        else:
+            print("Players",", ".join(str(w) for w in winners),"have reached 50,000!")
+        print("Goal Reached")
+        print("GAME OVER")
+        return True
+    if bankrupts:
+        if len(bankrupts)==1:
+            print("Player", bankrupts[0], "is bankrupt.")
+        else:
+            print("Players",", ".join(str(b) for b in bankrupts),"are bankrupt.")
+        print("GAME OVER")
+        return True
     return False
 results,bets=game()
 update_balances(results,bets)
