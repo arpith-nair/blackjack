@@ -1,3 +1,6 @@
+WIP
+
+
 Simple Blackjack game made for 1-8 players
 Starting balance of 500
 Game Over when 1 or more players reaches 50,000 or goes bankrupt
